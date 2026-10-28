@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffa6d2"/>
+      <stop offset="1" stop-color="#ff4f9e"/>
+    </linearGradient>
+    <linearGradient id="bun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffc979"/>
+      <stop offset="1" stop-color="#f39c4a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <ellipse cx="256" cy="418" rx="150" ry="16" fill="#c2256f" opacity=".25"/>
+  <!-- Brötchen oben -->
+  <path d="M112 246c0-80 64-134 144-134s144 54 144 134c0 10-8 18-18 18H130c-10 0-18-8-18-18z" fill="url(#bun)"/>
+  <g fill="#fff6e0">
+    <ellipse cx="200" cy="172" rx="10" ry="5" transform="rotate(-25 200 172)"/>
+    <ellipse cx="256" cy="150" rx="10" ry="5"/>
+    <ellipse cx="312" cy="172" rx="10" ry="5" transform="rotate(25 312 172)"/>
+    <ellipse cx="228" cy="208" rx="10" ry="5" transform="rotate(-10 228 208)"/>
+    <ellipse cx="288" cy="208" rx="10" ry="5" transform="rotate(10 288 208)"/>
+  </g>
+  <!-- Salat -->
+  <path d="M104 264H408V276q-19 22-38 0q-19 22-38 0q-19 22-38 0q-19 22-38 0q-19 22-38 0q-19 22-38 0q-19 22-38 0q-19 22-38 0z" fill="#7ed957"/>
+  <!-- Tomate -->
+  <rect x="122" y="290" width="268" height="20" rx="10" fill="#ff5a5f"/>
+  <!-- Patty -->
+  <rect x="108" y="306" width="296" height="48" rx="24" fill="#8a4b2a"/>
+  <!-- Brötchen unten -->
+  <path d="M120 358h272c0 30-22 52-50 52H170c-28 0-50-22-50-52z" fill="url(#bun)"/>
+  <!-- Glitzer -->
+  <path d="M410 80l8 18 18 8-18 8-8 18-8-18-18-8 18-8zM96 112l6 13 13 6-13 6-6 13-6-13-13-6 13-6z" fill="#fff" opacity=".9"/>
+</svg>
