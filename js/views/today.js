@@ -7,7 +7,7 @@ import { MICROS, NUTRIENTS } from '../nutrients.js';
 import { recipeSuggestions, suggestionName } from '../suggest.js';
 import { MEALS, addDays, dayLabel, today, num, uid } from '../util.js';
 import { Ring, Bar, openSheet, SheetHeader, Stepper, toast, MacroLine } from '../ui.js';
-import { openAdd } from './add.js';
+import { openAdd, SlotPicker } from './add.js';
 import { openRecipeEditor } from './recipes.js';
 import { celebrate } from './celebrate.js';
 
@@ -108,9 +108,42 @@ function MealCard({ meal, date, list }) {
       <div class="meal-actions">
         <button class="btn primary small" onClick=${() => openAdd({ date, meal: meal.key })}>+ Hinzufügen</button>
         ${!list.length && yesterday.length > 0 && html`<button class="btn ghost small" onClick=${copyYesterday}>↺ Wie gestern</button>`}
+        ${list.length > 0 && html`<button class="btn ghost small" onClick=${() => openCopy(date, meal.key, list)}>⧉ Kopieren</button>`}
         ${foodItems.length >= 2 && html`<button class="btn ghost small" onClick=${saveAsRecipe}>Als Gericht speichern</button>`}
       </div>
     </section>`;
+}
+
+// Mahlzeit kopieren: Standard ist dieselbe Mahlzeit am nächsten Tag, weitere Ziele wählbar.
+function openCopy(date, meal, list) {
+  openSheet((close) => html`<${CopySheet} date=${date} meal=${meal} list=${list} close=${close} />`);
+}
+
+function CopySheet({ date, meal, list, close }) {
+  const [slots, setSlots] = useState({ [`${addDays(date, 1)}#${meal}`]: true });
+  const chosen = Object.keys(slots).filter((k) => slots[k] && k !== `${date}#${meal}`);
+  const copy = () => {
+    mutate((s) => {
+      for (const k of chosen) {
+        const [d, m] = k.split('#');
+        list.forEach((e) => s.entries.push({ ...e, id: uid(), date: d, meal: m, createdAt: Date.now() }));
+      }
+    });
+    toast(chosen.length > 1 ? `In ${chosen.length} Mahlzeiten kopiert 💕` : 'Kopiert 💕');
+    close();
+  };
+  return html`
+    <${SheetHeader} title="Mahlzeit kopieren" onClose=${close} />
+    <div class="sheet-body">
+      <div class="card">
+        ${list.map((e) => html`<div class="row-sub copy-item">${e.kind === 'recipe' ? '🍲 ' : ''}${entryName(e)}</div>`)}
+      </div>
+      <h3 class="section-title">Wohin kopieren?</h3>
+      <${SlotPicker} from=${date} meal=${meal} slots=${slots} setSlots=${setSlots} />
+      <button class="btn primary wide" disabled=${!chosen.length} onClick=${copy}>
+        ${chosen.length > 1 ? `In ${chosen.length} Mahlzeiten kopieren` : 'Kopieren'}
+      </button>
+    </div>`;
 }
 
 function entryName(e) {
@@ -144,7 +177,7 @@ function EntryEdit({ e, close }) {
   return html`
     <${SheetHeader} title=${entryName(e)} onClose=${close} />
     <div class="sheet-body">
-      <${Stepper} value=${val} onChange=${setVal} step=${isFood ? 10 : 0.5} unit=${isFood ? 'g' : 'Portionen'} />
+      <${Stepper} value=${val} onChange=${setVal} step=${isFood ? 5 : 0.5} unit=${isFood ? 'g' : 'Portionen'} />
       <div class="card center"><${MacroLine} acc=${preview} /></div>
       <button class="btn primary wide" onClick=${save}>Speichern</button>
       <button class="btn danger wide" onClick=${del}>Löschen</button>

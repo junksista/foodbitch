@@ -88,14 +88,18 @@ export function Bar({ value, goal, label, unit, warn }) {
 }
 
 export function Stepper({ value, onChange, step = 1, min = 0, unit }) {
+  // zum nächsten Vielfachen von step springen (63 g: + → 65 g, − → 60 g)
+  const eps = 1e-9;
   const set = (v) => onChange(Math.max(min, Math.round(v * 100) / 100));
+  const up = () => set(Math.floor(value / step + eps) * step + step);
+  const down = () => set(Math.ceil(value / step - eps) * step - step);
   return html`
     <div class="stepper">
-      <button onClick=${() => set(value - step)}>−</button>
+      <button onClick=${down}>−</button>
       <input inputmode="decimal" value=${String(value).replace('.', ',')}
         onInput=${(e) => { const v = Number(e.target.value.replace(',', '.')); if (Number.isFinite(v)) onChange(v); }} />
       ${unit && html`<span class="stepper-unit">${unit}</span>`}
-      <button onClick=${() => set(value + step)}>+</button>
+      <button onClick=${up}>+</button>
     </div>`;
 }
 

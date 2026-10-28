@@ -4,7 +4,7 @@
     {
       "name": "foodbitch",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "5173", "--bind", "127.0.0.1"],
+      "runtimeArgs": ["scripts/serve.py"],
       "port": 5173
     }
   ]

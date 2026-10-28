@@ -18,7 +18,7 @@ Beide Nutzerinnen ernähren sich **vegan**, nutzen **iPhones** und die App als *
 
 - **Kein Build-Schritt, kein Node.** Reines ES-Modul-JavaScript mit Preact + htm (`vendor/preact-htm.js`, eingebunden über `js/lib.js`).
   Komponenten schreiben wir mit `html\`...\`` statt JSX.
-- Lokal starten: `python3 -m http.server 5173` im Projektordner, dann http://localhost:5173.
+- Lokal starten: `python3 scripts/serve.py` (ohne Browser-Cache), dann http://localhost:5173.
 - Daten liegen aktuell **nur lokal** in IndexedDB (ein JSON-Objekt, siehe `js/store.js`). Sync über Supabase ist Phase 2.
 - `sw.js` ist network-first: Änderungen sind beim Neuladen sofort da. Bei Änderungen am Cache-Verhalten `CACHE` hochzählen.
 - Open Food Facts: Die Such-API (`cgi/search.pl`) erlaubt nur ca. 10 Anfragen/Minute und antwortet bei Überlast mit 503 ohne CORS-Header

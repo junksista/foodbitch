@@ -11,12 +11,14 @@ const sig = (ids) => [...ids].sort().join('|');
 
 export function recipeSuggestions() {
   const { entries, recipes, dismissed } = getState();
-  const since = addDays(today(), -WINDOW);
+  const until = today();
+  const since = addDays(until, -WINDOW);
 
   // Mahlzeiten sammeln: date+meal → { foodId → grams }
   const meals = {};
   for (const e of entries) {
-    if (e.kind !== 'food' || e.date < since) continue;
+    // nur vergangene Tage + heute: vorausgeplante (kopierte) Mahlzeiten zählen nicht
+    if (e.kind !== 'food' || e.date < since || e.date > until) continue;
     const k = `${e.date}#${e.meal}`;
     (meals[k] ||= { date: e.date, meal: e.meal, items: {} }).items[e.refId] =
       (meals[k]?.items[e.refId] || 0) + e.grams;

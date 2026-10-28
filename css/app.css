@@ -191,6 +191,7 @@ h1, h2, h3 { font-family: var(--font-head); margin: 0; }
 
 .slot-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
 .slot-day { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.copy-item { padding: 3px 0; font-size: 14px; font-weight: 700; color: var(--text); }
 .slot-day-label { width: 100%; font-weight: 800; font-size: 14px; color: var(--muted); }
 
 /* Nährstoffe */

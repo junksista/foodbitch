@@ -176,7 +176,7 @@ export function AmountView({ food, onBack, onConfirm, confirmLabel, initial }) {
         ${food.brand && html`<div class="muted">${food.brand}</div>`}
         ${food.vegan === false && html`<p class="warn-text">⚠️ Laut Open Food Facts nicht vegan.</p>`}
       </div>
-      <${Stepper} value=${grams} onChange=${setGrams} step=${food.unit && food.unit.g < 20 ? food.unit.g : 10} unit="g" />
+      <${Stepper} value=${grams} onChange=${setGrams} step=${food.unit && food.unit.g < 5 ? food.unit.g : 5} unit="g" />
       <div class="chips">${quick.map((x) => html`<button class="chip" onClick=${() => setGrams(x.g)}>${x.label}</button>`)}</div>
       <div class="card center"><${MacroLine} acc=${acc} /></div>
       <button class="btn primary wide" disabled=${!grams} onClick=${() => onConfirm(grams)}>${confirmLabel || 'Eintragen'}</button>
@@ -191,10 +191,7 @@ export function RecipeLogView({ recipe, date, meal, onBack, close }) {
   const [grams, setGrams] = useState(recipe.cookedG ? Math.round(recipe.cookedG / recipe.portions) : 300);
   const per = recipePortion(recipe);
   const effPortions = byGrams && recipe.cookedG ? (grams / recipe.cookedG) * recipe.portions : portions;
-  const days = [date, addDays(date, 1), addDays(date, 2)];
-  const mealsShown = MEALS.filter((m) => m.main || m.key === 'snack2');
   const chosen = Object.keys(slots).filter((k) => slots[k]);
-  const toggle = (k) => setSlots({ ...slots, [k]: !slots[k] });
 
   const save = () => {
     const list = chosen.map((k) => { const [d, m] = k.split('#'); return { date: d, meal: m, portions: Math.round(effPortions * 100) / 100 }; });
@@ -212,23 +209,32 @@ export function RecipeLogView({ recipe, date, meal, onBack, close }) {
           <button class=${byGrams ? 'on' : ''} onClick=${() => setByGrams(true)}>Gramm</button>
         </div>` : ''}
       ${byGrams
-        ? html`<${Stepper} value=${grams} onChange=${setGrams} step=${10} unit="g" />`
+        ? html`<${Stepper} value=${grams} onChange=${setGrams} step=${5} unit="g" />`
         : html`<${Stepper} value=${portions} onChange=${setPortions} step=${0.5} unit=${portions === 1 ? 'Portion' : 'Portionen'} />`}
       <div class="card center"><span class="macro-line">je Mahlzeit ${num(per.n.kcal * effPortions, 0)} kcal · <b>${num(per.n.protein * effPortions)} g P</b></span></div>
 
       <h3 class="section-title">Für welche Mahlzeiten?</h3>
-      <div class="slot-grid">
-        ${days.map((d) => html`
-          <div class="slot-day">
-            <div class="slot-day-label">${dayLabel(d)}</div>
-            ${mealsShown.map((m) => {
-              const k = `${d}#${m.key}`;
-              return html`<button class=${'chip' + (slots[k] ? ' on' : '')} onClick=${() => toggle(k)}>${m.emoji} ${m.label}</button>`;
-            })}
-          </div>`)}
-      </div>
+      <${SlotPicker} from=${date} meal=${meal} slots=${slots} setSlots=${setSlots} />
       <button class="btn primary wide" disabled=${!chosen.length || !effPortions} onClick=${save}>
         ${chosen.length > 1 ? `In ${chosen.length} Mahlzeiten eintragen` : 'Eintragen'}
       </button>
+    </div>`;
+}
+
+// Auswahl von Mahlzeiten über drei Tage ab `from`. slots: { 'YYYY-MM-DD#meal': true }
+export function SlotPicker({ from, meal, slots, setSlots }) {
+  const days = [from, addDays(from, 1), addDays(from, 2)];
+  const mealsShown = MEALS.filter((m) => m.main || m.key === 'snack2' || m.key === meal);
+  const toggle = (k) => setSlots({ ...slots, [k]: !slots[k] });
+  return html`
+    <div class="slot-grid">
+      ${days.map((d) => html`
+        <div class="slot-day">
+          <div class="slot-day-label">${dayLabel(d)}</div>
+          ${mealsShown.map((m) => {
+            const k = `${d}#${m.key}`;
+            return html`<button class=${'chip' + (slots[k] ? ' on' : '')} onClick=${() => toggle(k)}>${m.emoji} ${m.label}</button>`;
+          })}
+        </div>`)}
     </div>`;
 }
