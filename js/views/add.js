@@ -85,7 +85,7 @@ function AddSheet({ date, meal, onPick, close }) {
         const list = await searchOFF(term, ctrl.signal);
         setOnline({ loading: false, list, error: null, q: term });
       } catch (e) {
-        if (e.name !== 'AbortError') setOnline({ loading: false, list: [], error: 'Open Food Facts bremst gerade (zu viele Suchen). Kurz warten und nochmal versuchen.', q: term });
+        if (e.name !== 'AbortError') setOnline({ loading: false, list: [], error: 'Open Food Facts ist gerade überlastet. Barcode-Scan geht trotzdem, oder kurz warten und nochmal versuchen.', q: term });
       }
     }, 900);
     return () => { clearTimeout(t); ctrl.abort(); };

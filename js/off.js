@@ -63,11 +63,22 @@ const cache = new Map();
 export async function searchOFF(q, signal) {
   const key = q.toLowerCase();
   if (cache.has(key)) return cache.get(key);
-  const url = `https://de.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}` +
-    `&search_simple=1&action=process&json=1&page_size=30&fields=${FIELDS}`;
-  const res = await fetch(url, { signal });
-  if (!res.ok) throw new Error('Open Food Facts antwortet nicht');
-  const data = await res.json();
+  const params = `search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=30&fields=${FIELDS}`;
+  // Bei Überlast sperrt OFF die Suche oft nur auf einzelnen Servern → deutsche Adresse zuerst, dann international.
+  const urls = [
+    `https://de.openfoodfacts.org/cgi/search.pl?${params}`,
+    `https://world.openfoodfacts.org/cgi/search.pl?${params}&cc=de&lc=de`,
+  ];
+  let data;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { signal });
+      if (res.ok) { data = await res.json(); break; }
+    } catch (e) {
+      if (e.name === 'AbortError') throw e;
+    }
+  }
+  if (!data) throw new Error('Open Food Facts antwortet nicht');
   const list = (data.products || []).map(mapProduct).filter((f) => f && f.name);
   // vegan zuerst, nicht-vegan zuletzt
   const rank = (f) => (f.vegan === true ? 0 : f.vegan === null ? 1 : 2);

@@ -24,6 +24,8 @@
 - [ ] Hosting (Netlify oder GitHub Pages) mit HTTPS, damit die Kamera auf dem iPhone geht
 
 ## Phase 3: Besser machen
+- [ ] Zuverlässige Produktsuche: Open Food Facts sperrt die Textsuche für anonyme Nutzer bei Überlast.
+      Idee: Suche über Supabase-Funktion mit eigenem OFF-Konto, oder deutschen OFF-Auszug selbst hosten.
 - [ ] Offiziellen Nährstoff-Datensatz einbinden (BLS 4.0 oder USDA FoodData Central) statt Richtwerten
 - [ ] Wochen-/Monatsauswertung
 - [ ] Wasser-Tracking?
